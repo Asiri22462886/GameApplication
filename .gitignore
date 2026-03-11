@@ -416,3 +416,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/WebApplication1/wwwroot/lib
+*.ico
+/WebApplication1/wwwroot/js/site.js
+/WebApplication1/Properties
+/WebApplication1/Migrations

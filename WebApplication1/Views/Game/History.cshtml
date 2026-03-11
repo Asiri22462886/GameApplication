@@ -1,0 +1,28 @@
+﻿@model List<WebApplication1.Models.GameHistory>
+
+<h2>My Game History</h2>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Word</th>
+        <th>Display Word</th>
+        <th>Selected</th>
+        <th>Correct</th>
+        <th>Score After</th>
+        <th>Lives After</th>
+        <th>Played At</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Word</td>
+            <td>@item.DisplayWord</td>
+            <td>@item.SelectedOption</td>
+            <td>@item.IsCorrect</td>
+            <td>@item.ScoreAfterRound</td>
+            <td>@item.LivesAfterRound</td>
+            <td>@item.PlayedAt</td>
+        </tr>
+    }
+</table>

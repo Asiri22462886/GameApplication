@@ -1,0 +1,38 @@
+﻿@model WebApplication1.Models.MissingLetterViewModelcs
+
+@{
+    ViewData["Title"] = "Play Game";
+}
+
+<h2>Missing Letter Game</h2>
+
+<p><strong>Score:</strong> @Model.Score</p>
+<p><strong>Lives:</strong> @Model.Lives</p>
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <p>@Model.Message</p>
+}
+
+<h3>@Model.DisplayWord</h3>
+
+<p>Correct image URL: @Model.CorrectImage</p>
+
+<form method="post" asp-action="CheckAnswer">
+    <input type="hidden" name="fullWord" value="@Model.FullWord" />
+    <input type="hidden" name="displayWord" value="@Model.DisplayWord" />
+    <input type="hidden" name="score" value="@Model.Score" />
+    <input type="hidden" name="lives" value="@Model.Lives" />
+
+    <button type="submit" name="selectedOption" value="@Model.CorrectOption" style="border:none; background:none;">
+        <img src="@Model.CorrectImage" width="200" height="200" />
+    </button>
+
+    <button type="submit" name="selectedOption" value="@Model.WrongOption1" style="border:none; background:none;">
+        <img src="@Model.WrongImage1" width="200" height="200" />
+    </button>
+
+    <button type="submit" name="selectedOption" value="@Model.WrongOption2" style="border:none; background:none;">
+        <img src="@Model.WrongImage2" width="200" height="200" />
+    </button>
+</form>

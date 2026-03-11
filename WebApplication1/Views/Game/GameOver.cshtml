@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Game Over";
+}
+
+<h2>Game Over</h2>
+<p>Your final score is: <strong>@ViewBag.FinalScore</strong></p>
+
+<a asp-action="Play" asp-route-score="0" asp-route-lives="3">Play Again</a>
+<br />
+<a asp-action="History">View History</a>
+<br />
+<a asp-action="HighScore">View High Score</a>
