@@ -27,8 +27,14 @@ namespace WebApplication1
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
-            builder.Services.AddHttpClient<IWordApiService, WordApiService>();
-            builder.Services.AddHttpClient<IImageApiService, ImageApiService>();
+            builder.Services.AddHttpClient<FoodWordProvider>();
+            builder.Services.AddHttpClient<WikidataWordProvider>();
+
+            builder.Services.AddScoped<IWordProvider, FoodWordProvider>();
+            builder.Services.AddScoped<IWordProvider, WikidataWordProvider>();
+
+            builder.Services.AddScoped<IGameQuestionService, GameQuestionService>();
+
 
             var app = builder.Build();
 
@@ -50,13 +56,14 @@ namespace WebApplication1
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapDefaultControllerRoute();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
-
+            app.MapControllers();
             app.Run();
         }
     }

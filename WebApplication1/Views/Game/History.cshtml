@@ -1,28 +1,297 @@
-﻿@model List<WebApplication1.Models.GameHistory>
+﻿@model IEnumerable<WebApplication1.Models.GameHistory>
 
-<h2>My Game History</h2>
+@{
+    ViewData["Title"] = "My History";
+}
 
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Word</th>
-        <th>Display Word</th>
-        <th>Selected</th>
-        <th>Correct</th>
-        <th>Score After</th>
-        <th>Lives After</th>
-        <th>Played At</th>
-    </tr>
+@if (Model == null || !Model.Any())
+{
+    <div class="empty-state-panel">
+        <div class="empty-orb"></div>
+        <div class="empty-icon">🧠</div>
+        <div class="empty-kicker">No Records Yet</div>
+        <h3 class="empty-title">Your history is empty</h3>
+        <p class="empty-text">
+            Start a new round and your played words, answers, score, and lives will appear here.
+        </p>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.Word</td>
-            <td>@item.DisplayWord</td>
-            <td>@item.SelectedOption</td>
-            <td>@item.IsCorrect</td>
-            <td>@item.ScoreAfterRound</td>
-            <td>@item.LivesAfterRound</td>
-            <td>@item.PlayedAt</td>
-        </tr>
-    }
-</table>
+        <div class="empty-actions">
+            <a asp-controller="Game" asp-action="Index" class="neon-btn primary-btn">Play Now</a>
+            <a asp-controller="Game" asp-action="HighScores" class="neon-btn ghost-btn">View Leaderboard</a>
+        </div>
+    </div>
+}
+
+<div class="game-shell history-shell">
+    <div class="game-bg"></div>
+
+    <div class="container py-4 py-lg-5">
+        <div class="history-wrap">
+            <div class="history-head">
+                <div>
+                    <div class="eyebrow">Player Records</div>
+                    <h1 class="page-title">My Game History</h1>
+                    <p class="page-subtitle">Track every round, every guess, every score.</p>
+                </div>
+
+                <div class="head-actions">
+                    <a asp-controller="Game" asp-action="Index" class="neon-btn ghost-btn">Back to Game</a>
+                    <a asp-controller="Game" asp-action="HighScores" class="neon-btn primary-btn">Leaderboard</a>
+                </div>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="empty-state-panel">
+                    <div class="empty-icon">🎮</div>
+                    <h3>No history yet</h3>
+                    <p>Play a round and your records will appear here.</p>
+                    <a asp-controller="Game" asp-action="Index" class="neon-btn primary-btn">Start Playing</a>
+                </div>
+            }
+            else
+            {
+                <div class="glass-table-card">
+                    <div class="table-responsive">
+                        <table class="game-table">
+                            <thead>
+                                <tr>
+                                    <th>Played</th>
+                                    <th>Category</th>
+                                    <th>Word</th>
+                                    <th>Masked</th>
+                                    <th>Missing</th>
+                                    <th>Selected</th>
+                                    <th>Result</th>
+                                    <th>Score</th>
+                                    <th>Lives</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderByDescending(x => x.PlayedAt))
+                                {
+                                    <tr>
+                                        <td>@item.PlayedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                        <td><span class="pill-chip">@item.Category</span></td>
+                                        <td>@item.OriginalWord</td>
+                                        <td class="masked-cell">@item.MaskedWord</td>
+                                        <td>@item.MissingLetter</td>
+                                        <td>@item.SelectedLetter</td>
+                                        <td>
+                                            @if (item.IsCorrect)
+                                            {
+                                                <span class="status-badge ok">Correct</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge bad">Wrong</span>
+                                            }
+                                        </td>
+                                        <td><span class="score-pill">@item.ScoreAfterRound</span></td>
+                                        <td><span class="life-pill">@item.LivesAfterRound</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .history-shell {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at top left, rgba(0, 255, 200, .14), transparent 28%), radial-gradient(circle at top right, rgba(102, 126, 234, .18), transparent 34%), radial-gradient(circle at bottom center, rgba(255, 0, 153, .12), transparent 30%), linear-gradient(135deg, #07111f 0%, #0b1730 45%, #07101d 100%);
+            color: #eef6ff;
+        }
+
+        .game-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .45;
+            background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        .history-wrap {
+            position: relative;
+            z-index: 2;
+        }
+
+        .history-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-size: .8rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: #7ef9ff;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.05;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(126, 249, 255, .18);
+        }
+
+        .page-subtitle {
+            margin: 10px 0 0;
+            color: #a9bfd8;
+            font-size: 1rem;
+        }
+
+        .head-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .neon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: .25s ease;
+            border: 1px solid rgba(255,255,255,.14);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #7c5cff, #00d4ff);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, .24);
+        }
+
+        .ghost-btn {
+            background: rgba(255,255,255,.06);
+            color: #eef6ff;
+            backdrop-filter: blur(12px);
+        }
+
+        .neon-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .glass-table-card,
+        .empty-state-panel {
+            border: 1px solid rgba(255,255,255,.09);
+            background: rgba(10, 18, 35, .68);
+            backdrop-filter: blur(18px);
+            border-radius: 28px;
+            box-shadow: 0 18px 55px rgba(0, 0, 0, .35);
+        }
+
+        .glass-table-card {
+            padding: 12px;
+        }
+
+        .empty-state-panel {
+            text-align: center;
+            padding: 56px 24px;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .game-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #eef6ff;
+            min-width: 980px;
+        }
+
+            .game-table thead th {
+                font-size: .82rem;
+                text-transform: uppercase;
+                letter-spacing: .08em;
+                color: #8fdcff;
+                padding: 16px 14px;
+                border-bottom: 1px solid rgba(255,255,255,.08);
+                background: rgba(255,255,255,.03);
+            }
+
+            .game-table tbody td {
+                padding: 14px;
+                border-bottom: 1px solid rgba(255,255,255,.06);
+                vertical-align: middle;
+            }
+
+            .game-table tbody tr:hover {
+                background: rgba(126, 249, 255, .04);
+            }
+
+        .pill-chip,
+        .score-pill,
+        .life-pill,
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            font-weight: 700;
+            padding: 7px 12px;
+            font-size: .82rem;
+        }
+
+        .pill-chip {
+            background: rgba(124, 92, 255, .18);
+            color: #cdbfff;
+            border: 1px solid rgba(124, 92, 255, .32);
+        }
+
+        .score-pill {
+            min-width: 42px;
+            background: rgba(0, 212, 255, .14);
+            color: #7ef9ff;
+            border: 1px solid rgba(0, 212, 255, .28);
+        }
+
+        .life-pill {
+            min-width: 42px;
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,.12);
+        }
+
+        .status-badge.ok {
+            background: rgba(0, 255, 145, .14);
+            color: #72ffbe;
+            border: 1px solid rgba(0, 255, 145, .26);
+        }
+
+        .status-badge.bad {
+            background: rgba(255, 80, 110, .12);
+            color: #ff97ab;
+            border: 1px solid rgba(255, 80, 110, .24);
+        }
+
+        .masked-cell {
+            letter-spacing: .18em;
+            font-weight: 800;
+            color: #ffffff;
+        }
+    </style>
+}

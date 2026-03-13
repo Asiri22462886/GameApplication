@@ -6,12 +6,21 @@ namespace WebApplication1.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
+        public DbSet<GameHistory> GameHistories { get; set; }
+        public DbSet<UserHighScore> UserHighScores { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            
         }
-        
-        public DbSet<UserHighScore> UserHighScores { get; set; }
-        public DbSet<GameHistory> GameHistories { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<GameHistory>().ToTable("GameHistories");
+            builder.Entity<UserHighScore>().ToTable("UserHighScores");
+        }
+
+
     }
 }

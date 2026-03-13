@@ -1,0 +1,804 @@
+﻿@{
+    ViewData["Title"] = "Missing Letter Game";
+}
+
+<style>
+    :root {
+        --panel-border: rgba(255,255,255,0.14);
+        --text: #e5eefc;
+        --muted: #a9b8d3;
+        --success: #10b981;
+        --danger: #ef4444;
+        --shadow: 0 20px 60px rgba(0,0,0,0.30);
+    }
+
+    body {
+        background: linear-gradient(135deg, #0b1020 0%, #111827 35%, #1e293b 100%);
+        min-height: 100vh;
+    }
+
+    .game-shell {
+        position: relative;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .game-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(124,58,237,0.25), transparent 30%), radial-gradient(circle at top right, rgba(6,182,212,0.20), transparent 25%), radial-gradient(circle at bottom center, rgba(16,185,129,0.18), transparent 30%);
+        pointer-events: none;
+    }
+
+    .game-panel {
+        position: relative;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid var(--panel-border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: 28px;
+        color: var(--text);
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .eyebrow {
+        display: inline-block;
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #c4b5fd;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    .game-title {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .game-subtitle {
+        margin-top: 8px;
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 1rem;
+    }
+
+    .topbar-actions {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .stat-pill {
+        min-width: 110px;
+        padding: 14px 18px;
+        border-radius: 18px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+    }
+
+    .stat-score {
+        background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    }
+
+    .stat-life {
+        background: linear-gradient(135deg, #ef4444, #f97316);
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 0.82rem;
+        opacity: 0.9;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .controls-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .control-card {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 20px;
+        padding: 16px;
+    }
+
+    .control-label {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #cbd5e1;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .modern-select {
+        width: 100%;
+        border: none;
+        outline: none;
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: rgba(15,23,42,0.85);
+        color: white;
+        font-size: 1rem;
+    }
+
+    .phase-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 110px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.92rem;
+    }
+
+        .phase-badge.preview {
+            background: rgba(245,158,11,0.18);
+            color: #fbbf24;
+            border: 1px solid rgba(245,158,11,0.35);
+        }
+
+        .phase-badge.shuffle {
+            background: rgba(59,130,246,0.18);
+            color: #93c5fd;
+            border: 1px solid rgba(59,130,246,0.35);
+        }
+
+        .phase-badge.answer {
+            background: rgba(16,185,129,0.16);
+            color: #6ee7b7;
+            border: 1px solid rgba(16,185,129,0.35);
+        }
+
+    .instruction-text {
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .question-panel {
+        text-align: center;
+        background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.10));
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 24px;
+        padding: 26px 20px;
+        margin-bottom: 28px;
+    }
+
+    .question-chip {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.12);
+        color: #dbeafe;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+
+    .masked-word {
+        font-size: clamp(2.4rem, 7vw, 4.4rem);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        color: #fff;
+        margin-bottom: 8px;
+    }
+
+    .message-text {
+        min-height: 28px;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .cards-wrap {
+        min-height: 380px;
+    }
+
+    #optionsContainer {
+        position: relative;
+        min-height: 340px;
+    }
+
+    .shuffle-slot {
+        position: relative;
+        height: 320px;
+    }
+
+    .shuffle-card {
+        position: absolute;
+        width: min(100%, 300px);
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%);
+        transition: left 0.8s cubic-bezier(.22,1,.36,1), top 0.8s cubic-bezier(.22,1,.36,1), transform 0.8s cubic-bezier(.22,1,.36,1), opacity 0.35s ease;
+        z-index: 1;
+    }
+
+        .shuffle-card.pos-0 {
+            left: 16.66%;
+            transform: translateX(-50%) rotate(-4deg);
+            z-index: 2;
+        }
+
+        .shuffle-card.pos-1 {
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+            z-index: 3;
+        }
+
+        .shuffle-card.pos-2 {
+            left: 83.33%;
+            transform: translateX(-50%) rotate(4deg);
+            z-index: 2;
+        }
+
+        .shuffle-card.shuffle-left {
+            left: 30%;
+            top: 10px;
+            transform: translateX(-50%) rotate(-14deg) scale(0.98);
+            z-index: 4;
+        }
+
+        .shuffle-card.shuffle-center {
+            left: 50%;
+            top: -12px;
+            transform: translateX(-50%) rotate(0deg) scale(1.02);
+            z-index: 5;
+        }
+
+        .shuffle-card.shuffle-right {
+            left: 70%;
+            top: 10px;
+            transform: translateX(-50%) rotate(14deg) scale(0.98);
+            z-index: 4;
+        }
+
+    .option-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 14px 35px rgba(0,0,0,0.20);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        cursor: pointer;
+        user-select: none;
+    }
+
+        .option-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.28);
+            border-color: rgba(255,255,255,0.22);
+        }
+
+        .option-card.disabled {
+            pointer-events: none;
+            opacity: 0.88;
+        }
+
+    .image-area {
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+        padding: 18px;
+    }
+
+    .option-image {
+        width: 100%;
+        height: 270px;
+        object-fit: contain;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.92);
+        transition: filter 0.35s ease, transform 0.35s ease;
+    }
+
+        .option-image.hidden-image {
+            filter: blur(24px) brightness(0.88);
+            transform: scale(1.05);
+        }
+
+        .option-image.reveal-image {
+            filter: blur(0);
+            transform: scale(1);
+        }
+
+    .option-body {
+        padding: 18px;
+        text-align: center;
+    }
+
+    .option-label {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: white;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+        .option-label.hidden-label {
+            opacity: 0;
+            transform: translateY(8px);
+            visibility: hidden;
+        }
+
+    .preview-banner {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(245,158,11,0.92);
+        color: #111827;
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .shuffle-hint {
+        position: absolute;
+        left: 50%;
+        top: -8px;
+        transform: translateX(-50%);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        background: rgba(59,130,246,0.92);
+        color: white;
+        z-index: 10;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+    }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 28px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        border: none;
+        border-radius: 16px;
+        padding: 14px 22px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+
+    .success-btn {
+        background: linear-gradient(135deg, #059669, #10b981);
+    }
+
+    .text-success-modern {
+        color: #6ee7b7;
+    }
+
+    .text-danger-modern {
+        color: #fca5a5;
+    }
+
+    @@media (max-width: 991px) {
+        .controls-row {
+            grid-template-columns: 1fr;
+        }
+
+        .option-image {
+            height: 220px;
+        }
+
+        .shuffle-card,
+        .shuffle-card.pos-0,
+        .shuffle-card.pos-1,
+        .shuffle-card.pos-2 {
+            position: relative;
+            left: auto;
+            top: auto;
+            transform: none;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .shuffle-slot {
+            height: auto;
+        }
+    }
+</style>
+
+<div class="game-shell">
+    <div class="game-bg"></div>
+
+    <div class="container py-4 py-lg-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-10">
+                <div class="game-panel">
+
+                    <div class="topbar">
+                        <div>
+                            <div class="eyebrow">Visual Memory Quiz</div>
+                            <h1 class="game-title">Missing Letter Challenge</h1>
+                            <p class="game-subtitle">
+                                Preview the cards, then watch them shuffle and pick from memory.
+                            </p>
+                        </div>
+
+                        <div class="topbar-actions">
+                            <div class="stat-pill stat-score">
+                                <span class="stat-label">Score</span>
+                                <span id="score" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-pill stat-life">
+                                <span class="stat-label">Lives</span>
+                                <span id="lives" class="stat-value">3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controls-row">
+                        <div class="control-card">
+                            <label for="category" class="control-label">Category</label>
+                            <select id="category" class="modern-select">
+                                <option value="fruits">Fruits</option>
+                                <option value="animals">Animals</option>
+                                <option value="objects">Objects</option>
+                            </select>
+                        </div>
+
+                        <div class="control-card">
+                            <div class="control-label">Round Status</div>
+                            <div id="phaseBadge" class="phase-badge preview">Preview</div>
+                        </div>
+
+                        <div class="control-card">
+                            <div class="control-label">Instruction</div>
+                            <div id="instructionText" class="instruction-text">
+                                Loading question...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-panel">
+                        <div class="question-chip">Guess the missing letter</div>
+                        <div id="maskedWord" class="masked-word">Loading...</div>
+                        <div id="message" class="message-text"></div>
+                    </div>
+
+                    <div class="cards-wrap">
+                        <div id="optionsContainer"></div>
+                    </div>
+
+                    <div class="bottom-actions">
+                        <button id="nextBtn" class="action-btn primary-btn">Next Question</button>
+                        <button id="restartBtn" class="action-btn success-btn" style="display:none;">Restart Game</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let score = 0;
+        let lives = 3;
+        let currentQuestion = null;
+        let answered = false;
+        let canClick = false;
+        let previewTimer = null;
+        let shuffleTimers = [];
+
+        const previewDuration = 2500;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("category").value = "fruits";
+            loadQuestion();
+
+            document.getElementById("nextBtn").addEventListener("click", function () {
+                if (lives > 0) loadQuestion();
+            });
+
+            document.getElementById("restartBtn").addEventListener("click", function () {
+                score = 0;
+                lives = 3;
+                answered = false;
+                canClick = false;
+                updateStats();
+                setMessage("", "");
+                document.getElementById("restartBtn").style.display = "none";
+                document.getElementById("nextBtn").style.display = "inline-block";
+                loadQuestion();
+            });
+
+            document.getElementById("category").addEventListener("change", function () {
+                score = 0;
+                lives = 3;
+                answered = false;
+                canClick = false;
+                updateStats();
+                setMessage("", "");
+                document.getElementById("restartBtn").style.display = "none";
+                document.getElementById("nextBtn").style.display = "inline-block";
+                loadQuestion();
+            });
+        });
+
+        function clearAllTimers() {
+            if (previewTimer) {
+                clearTimeout(previewTimer);
+                previewTimer = null;
+            }
+
+            shuffleTimers.forEach(t => clearTimeout(t));
+            shuffleTimers = [];
+        }
+
+        async function loadQuestion() {
+            answered = false;
+            canClick = false;
+            clearAllTimers();
+
+            updatePhaseUI("preview");
+            document.getElementById("maskedWord").textContent = "Loading...";
+            document.getElementById("instructionText").textContent = "Loading a new challenge...";
+            document.getElementById("optionsContainer").innerHTML = "";
+            setMessage("", "");
+
+            const category = document.getElementById("category").value;
+
+            try {
+                const response = await fetch(`/api/game/question?category=${category}`);
+                if (!response.ok) throw new Error("Failed to load question");
+
+                currentQuestion = await response.json();
+                document.getElementById("maskedWord").textContent = currentQuestion.maskedWord;
+                document.getElementById("instructionText").textContent =
+                    `Memorize the correct card for "${currentQuestion.maskedWord}"`;
+
+                renderShuffleCards(currentQuestion.options, true, false);
+
+                previewTimer = setTimeout(() => {
+                    if (!currentQuestion || answered || lives <= 0) return;
+                    startShuffleSequence();
+                }, previewDuration);
+
+            } catch (error) {
+                document.getElementById("maskedWord").textContent = "Error";
+                document.getElementById("instructionText").textContent = "Could not load question.";
+                setMessage("Could not load question.", "danger");
+            }
+        }
+
+        function renderShuffleCards(options, showLabels, enableClick) {
+            const container = document.getElementById("optionsContainer");
+
+            container.innerHTML = `
+                <div class="shuffle-slot">
+                    <div class="shuffle-hint" id="shuffleHint" style="display:none;">Shuffling...</div>
+                </div>
+            `;
+
+            const slot = container.querySelector(".shuffle-slot");
+
+            options.forEach((option, index) => {
+                const card = document.createElement("div");
+                card.className = `shuffle-card pos-${index}`;
+
+                card.innerHTML = `
+                    <div class="option-card ${!enableClick ? 'disabled' : ''}">
+                        ${showLabels ? '<div class="preview-banner">Preview</div>' : ''}
+                        <div class="image-area">
+                            <img src="${option.imageUrl}"
+                                 class="option-image ${showLabels ? 'reveal-image' : 'hidden-image'}"
+                                 alt="${option.letter}"
+                                 onerror="this.onerror=null; this.src='/images/letters/a.png';">
+                        </div>
+                        <div class="option-body">
+                            <div class="option-label ${showLabels ? '' : 'hidden-label'}">
+                                ${option.letter.toUpperCase()}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                card.querySelector(".option-card").addEventListener("click", function () {
+                    if (!canClick) return;
+                    checkAnswer(option);
+                });
+
+                slot.appendChild(card);
+            });
+        }
+
+        function startShuffleSequence() {
+            canClick = false;
+            updatePhaseUI("shuffle");
+            document.getElementById("instructionText").textContent =
+                "Watch closely... the cards are shuffling.";
+            document.getElementById("shuffleHint").style.display = "inline-flex";
+
+            hideLabelsAndBlurImages();
+
+            const step1 = setTimeout(() => applyShufflePattern(["shuffle-left", "shuffle-center", "shuffle-right"]), 120);
+            const step2 = setTimeout(() => applyShufflePattern(["shuffle-right", "shuffle-left", "shuffle-center"]), 650);
+            const step3 = setTimeout(() => applyShufflePattern(["shuffle-center", "shuffle-right", "shuffle-left"]), 1180);
+            const step4 = setTimeout(() => finishShuffle(), 1900);
+
+            shuffleTimers.push(step1, step2, step3, step4);
+        }
+
+        function hideLabelsAndBlurImages() {
+            document.querySelectorAll(".option-label").forEach(label => {
+                label.classList.add("hidden-label");
+            });
+
+            document.querySelectorAll(".preview-banner").forEach(el => el.remove());
+
+            document.querySelectorAll(".option-image").forEach(img => {
+                img.classList.remove("reveal-image");
+                img.classList.add("hidden-image");
+            });
+        }
+
+        function applyShufflePattern(pattern) {
+            const cards = document.querySelectorAll(".shuffle-card");
+            cards.forEach((card, index) => {
+                card.className = "shuffle-card " + pattern[index];
+            });
+        }
+
+        function finishShuffle() {
+            const cards = Array.from(document.querySelectorAll(".shuffle-card"));
+            const shuffledIndexes = [0, 1, 2].sort(() => Math.random() - 0.5);
+
+            cards.forEach((card, visualIndex) => {
+                card.className = `shuffle-card pos-${shuffledIndexes[visualIndex]}`;
+                card.querySelector(".option-card").classList.remove("disabled");
+            });
+
+            const hint = document.getElementById("shuffleHint");
+            if (hint) hint.style.display = "none";
+
+            canClick = true;
+            updatePhaseUI("answer");
+            document.getElementById("instructionText").textContent =
+                "Now choose the correct hidden card.";
+        }
+
+                async function checkAnswer(option) {
+            if (answered || lives <= 0 || !canClick) return;
+
+            answered = true;
+            canClick = false;
+            clearAllTimers();
+
+            try {
+                const payload = {
+                    category: document.getElementById("category").value,
+                    originalWord: currentQuestion.originalWord,
+                    maskedWord: currentQuestion.maskedWord,
+                    missingLetter: currentQuestion.missingLetter,
+                    selectedLetter: option.letter,
+                    score: score,
+                    lives: lives
+                };
+
+                console.log("Submitting answer payload:", payload);
+
+                const response = await fetch('/api/game/answer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+
+                console.log("Submit status:", response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.log("Submit error:", errorText);
+                    setMessage("Could not save answer.", "danger");
+                    answered = false;
+                    canClick = true;
+                    return;
+                }
+
+                const result = await response.json();
+                console.log("Submit result:", result);
+
+                score = result.score;
+                lives = result.lives;
+
+                if (result.isCorrect) {
+                    setMessage("Correct! Great memory.", "success");
+                } else {
+                    setMessage(`Wrong! Correct letter was ${currentQuestion.missingLetter.toUpperCase()}.`, "danger");
+                }
+
+                updateStats();
+
+                if (result.gameOver) {
+                    document.getElementById("maskedWord").textContent = "Game Over";
+                    document.getElementById("instructionText").textContent = "No lives left. Restart to play again.";
+                    document.getElementById("optionsContainer").innerHTML = "";
+                    document.getElementById("nextBtn").style.display = "none";
+                    document.getElementById("restartBtn").style.display = "inline-block";
+                    return;
+                }
+
+                setTimeout(() => {
+                    loadQuestion();
+                }, 1200);
+            } catch (error) {
+                console.error("SubmitAnswer failed:", error);
+                setMessage("Something went wrong while submitting the answer.", "danger");
+                answered = false;
+                canClick = true;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById("score").textContent = score;
+            document.getElementById("lives").textContent = lives;
+        }
+
+        function updatePhaseUI(mode) {
+            const badge = document.getElementById("phaseBadge");
+
+            if (mode === "preview") {
+                badge.textContent = "Preview";
+                badge.className = "phase-badge preview";
+            } else if (mode === "shuffle") {
+                badge.textContent = "Shuffle";
+                badge.className = "phase-badge shuffle";
+            } else {
+                badge.textContent = "Answer";
+                badge.className = "phase-badge answer";
+            }
+        }
+
+        function setMessage(text, type) {
+            const el = document.getElementById("message");
+            el.textContent = text;
+
+            if (type === "success") {
+                el.className = "message-text text-success-modern";
+            } else if (type === "danger") {
+                el.className = "message-text text-danger-modern";
+            } else {
+                el.className = "message-text";
+            }
+        }
+    </script>
+}
