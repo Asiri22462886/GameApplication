@@ -25,6 +25,15 @@ namespace WebApplication1
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
             builder.Services.AddRazorPages();
 
             builder.Services.AddHttpClient<FoodWordProvider>();
@@ -35,6 +44,15 @@ namespace WebApplication1
 
             builder.Services.AddScoped<IGameQuestionService, GameQuestionService>();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.SlidingExpiration = true;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
 
             var app = builder.Build();
 
@@ -53,17 +71,33 @@ namespace WebApplication1
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapDefaultControllerRoute();
+            app.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+            app.MapGet("/", async context =>
+            {
+                if (context.User.Identity != null && context.User.Identity.IsAuthenticated)
+                {
+                    context.Response.Redirect("/Home/Index");
+                }
+                else
+                {
+                    context.Response.Redirect("/Identity/Account/Login");
+                }
+
+                await Task.CompletedTask;
+            });
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
-            app.MapControllers();
             app.Run();
         }
     }

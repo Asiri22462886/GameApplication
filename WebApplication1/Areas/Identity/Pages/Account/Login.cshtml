@@ -1,0 +1,306 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<style>
+    body {
+        min-height: 100vh;
+        background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.28), transparent 32%), radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.22), transparent 28%), linear-gradient(135deg, #0f172a 0%, #111827 45%, #1e1b4b 100%);
+    }
+
+    .game-login-page {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+    }
+
+    .game-login-shell {
+        width: 100%;
+        max-width: 1100px;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 28px;
+        align-items: stretch;
+    }
+
+    .game-hero,
+    .game-card {
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .game-hero {
+        padding: 40px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .game-hero::before {
+            content: "";
+            position: absolute;
+            inset: auto -60px -60px auto;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.18);
+            filter: blur(10px);
+        }
+
+    .game-badge {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.18);
+        color: #bfdbfe;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+    }
+
+    .game-hero h1 {
+        font-size: 3rem;
+        line-height: 1.05;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .game-hero p {
+        color: #d1d5db;
+        font-size: 1.05rem;
+        max-width: 520px;
+        margin-bottom: 28px;
+    }
+
+    .game-feature-list {
+        display: grid;
+        gap: 14px;
+        margin-top: 24px;
+    }
+
+    .game-feature {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #e5e7eb;
+        font-weight: 500;
+    }
+
+    .game-feature-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 1.1rem;
+    }
+
+    .game-card {
+        padding: 34px 28px;
+        color: #fff;
+    }
+
+        .game-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+    .game-card-subtitle {
+        color: #cbd5e1;
+        margin-bottom: 24px;
+    }
+
+    .form-floating > .form-control {
+        height: 60px;
+        min-height: 60px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+
+        .form-floating > .form-control:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.2);
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+
+    .form-floating > label {
+        color: #cbd5e1;
+    }
+
+    .form-control::placeholder {
+        color: transparent;
+    }
+
+    .form-check-input {
+        border-color: rgba(255,255,255,0.25);
+        background-color: rgba(255,255,255,0.08);
+    }
+
+    .form-check-label,
+    .checkbox label {
+        color: #dbeafe;
+    }
+
+    .game-login-btn {
+        width: 100%;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
+        color: #fff;
+        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .game-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 34px rgba(124, 58, 237, 0.4);
+        }
+
+    .game-links {
+        margin-top: 18px;
+    }
+
+        .game-links p {
+            margin-bottom: 10px;
+        }
+
+        .game-links a {
+            color: #93c5fd;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .game-links a:hover {
+                text-decoration: underline;
+            }
+
+    .text-danger,
+    .validation-summary-errors {
+        color: #fca5a5 !important;
+    }
+
+    .external-login-wrap {
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .external-login-title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 14px;
+        color: #e2e8f0;
+    }
+
+    .external-provider-btn {
+        margin: 0 8px 8px 0;
+        border-radius: 12px;
+    }
+
+    @@media (max-width: 991.98px) {
+        .game-login-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .game-hero {
+            padding: 28px;
+        }
+
+            .game-hero h1 {
+                font-size: 2.3rem;
+            }
+    }
+</style>
+
+<div class="game-login-page">
+    <div class="game-login-shell">
+        <div class="game-hero">
+            <div class="game-badge">Word Game Portal</div>
+            <h1>Play smarter.<br />Score higher.</h1>
+            <p>
+                Sign in to continue your game journey, track your score history,
+                and challenge yourself with the next round.
+            </p>
+
+            <div class="game-feature-list">
+                <div class="game-feature">
+                    <span class="game-feature-icon">🎯</span>
+                    <span>Track your best scores</span>
+                </div>
+                <div class="game-feature">
+                    <span class="game-feature-icon">🧠</span>
+                    <span>Play memory and word challenges</span>
+                </div>
+                <div class="game-feature">
+                    <span class="game-feature-icon">🏆</span>
+                    <span>Keep your progress in one place</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-card">
+            <h2>Welcome Back</h2>
+            <div class="game-card-subtitle">Log in to enter your dashboard</div>
+
+            <form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <label asp-for="Input.Email">Email</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label asp-for="Input.Password">Password</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="checkbox mb-3">
+                    <label asp-for="Input.RememberMe" class="form-label">
+                        <input class="form-check-input me-2" asp-for="Input.RememberMe" />
+                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                    </label>
+                </div>
+
+                <div>
+                    <button id="login-submit" type="submit" class="game-login-btn">Log In</button>
+                </div>
+
+                <div class="game-links">
+                    <p><a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a></p>
+                    <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a></p>
+                    <p><a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a></p>
+                </div>
+            </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

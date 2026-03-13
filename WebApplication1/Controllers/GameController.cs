@@ -16,17 +16,18 @@ namespace WebApplication1.Controllers
             _dbContext = dbContext;
         }
 
+       
         public IActionResult Index()
         {
             return View();
         }
-
+        
         public IActionResult GameOver(int finalScore = 0)
         {
             ViewBag.FinalScore = finalScore;
             return View();
         }
-
+       
         public IActionResult History()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -42,7 +43,7 @@ namespace WebApplication1.Controllers
             return View(history);
         }
 
-        [Authorize]
+        
         public async Task<IActionResult> HighScores()
         {
             var scores = await (
