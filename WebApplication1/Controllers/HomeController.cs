@@ -62,22 +62,7 @@ namespace WebApplication1.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> History()
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-            {
-                return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
-
-            var history = await _context.GameHistories
-                .Where(x => x.UserId == user.Id)
-                .OrderByDescending(x => x.PlayedAt)
-                .ToListAsync();
-
-            return View(history);
-        }
+        
 
         private string GetRank(int highestScore)
         {
