@@ -6,23 +6,133 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                Hello @User.Identity?.Name!
-            </a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-            </form>
+            <div class="auth-wrap">
+                <a class="user-pill" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                    <span class="user-pill-icon">👤</span>
+                    <span>@User.Identity?.Name</span>
+                </a>
+
+                <form class="logout-form"
+                      asp-area="Identity"
+                      asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="logout-btn border-0">
+                        Logout
+                    </button>
+                </form>
+            </div>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <div class="auth-wrap">
+                <a class="auth-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                <a class="auth-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            </div>
         </li>
     }
 </ul>
+
+<style>
+    .auth-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .user-pill,
+    .user-pill:link,
+    .user-pill:visited,
+    .user-pill:hover,
+    .user-pill:active {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(37,99,235,.35), rgba(124,58,237,.35));
+        border: 1px solid rgba(255,255,255,.20);
+        color: #ffffff !important;
+        font-weight: 800;
+        text-decoration: none;
+        box-shadow: 0 10px 24px rgba(37,99,235,.18);
+        transition: all .25s ease;
+    }
+
+        .user-pill:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, rgba(37,99,235,.45), rgba(124,58,237,.45));
+            color: #ffffff !important;
+        }
+
+        .user-pill span {
+            color: #ffffff !important;
+        }
+
+    .user-pill-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.18);
+        color: #ffffff !important;
+        font-size: .9rem;
+        flex-shrink: 0;
+    }
+
+    .auth-link,
+    .auth-link:link,
+    .auth-link:visited,
+    .auth-link:hover,
+    .auth-link:active {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 14px;
+        color: #e0f2fe !important;
+        font-weight: 700;
+        text-decoration: none;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+        transition: all .22s ease;
+    }
+
+        .auth-link:hover {
+            color: #ffffff !important;
+            background: rgba(255,255,255,.10);
+            transform: translateY(-2px);
+        }
+
+    .logout-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 14px;
+        color: #ffffff !important;
+        font-weight: 800;
+        background: rgba(239,68,68,.22);
+        border: 1px solid rgba(248,113,113,.40);
+        transition: all .22s ease;
+    }
+
+        .logout-btn:hover {
+            color: #ffffff !important;
+            background: rgba(239,68,68,.32);
+            transform: translateY(-2px);
+        }
+
+    .logout-form {
+        margin: 0;
+    }
+
+        .logout-form .btn,
+        .logout-form button {
+            color: #ffffff !important;
+        }
+</style>

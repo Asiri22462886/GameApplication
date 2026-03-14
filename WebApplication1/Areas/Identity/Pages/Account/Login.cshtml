@@ -1,306 +1,331 @@
 ﻿@page
 @model LoginModel
-
 @{
     ViewData["Title"] = "Log in";
+    Layout = null;
 }
 
-<style>
-    body {
-        min-height: 100vh;
-        background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.28), transparent 32%), radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.22), transparent 28%), linear-gradient(135deg, #0f172a 0%, #111827 45%, #1e1b4b 100%);
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Word Game</title>
 
-    .game-login-page {
-        min-height: calc(100vh - 80px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 16px;
-    }
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
 
-    .game-login-shell {
-        width: 100%;
-        max-width: 1100px;
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 28px;
-        align-items: stretch;
-    }
-
-    .game-hero,
-    .game-card {
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
-    }
-
-    .game-hero {
-        padding: 40px;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-
-        .game-hero::before {
-            content: "";
-            position: absolute;
-            inset: auto -60px -60px auto;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            background: rgba(59, 130, 246, 0.18);
-            filter: blur(10px);
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-    .game-badge {
-        display: inline-block;
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: rgba(59, 130, 246, 0.18);
-        color: #bfdbfe;
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 18px;
-    }
-
-    .game-hero h1 {
-        font-size: 3rem;
-        line-height: 1.05;
-        font-weight: 800;
-        margin-bottom: 14px;
-    }
-
-    .game-hero p {
-        color: #d1d5db;
-        font-size: 1.05rem;
-        max-width: 520px;
-        margin-bottom: 28px;
-    }
-
-    .game-feature-list {
-        display: grid;
-        gap: 14px;
-        margin-top: 24px;
-    }
-
-    .game-feature {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: #e5e7eb;
-        font-weight: 500;
-    }
-
-    .game-feature-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.1);
-        font-size: 1.1rem;
-    }
-
-    .game-card {
-        padding: 34px 28px;
-        color: #fff;
-    }
-
-        .game-card h2 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-    .game-card-subtitle {
-        color: #cbd5e1;
-        margin-bottom: 24px;
-    }
-
-    .form-floating > .form-control {
-        height: 60px;
-        min-height: 60px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.14);
-        background: rgba(255,255,255,0.08);
-        color: #fff;
-    }
-
-        .form-floating > .form-control:focus {
-            border-color: #60a5fa;
-            box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.2);
-            background: rgba(255,255,255,0.12);
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #fff;
+            background: radial-gradient(circle at top left, rgba(59,130,246,.14), transparent 24%), radial-gradient(circle at bottom right, rgba(139,92,246,.14), transparent 24%), linear-gradient(135deg, #0f172a 0%, #111827 45%, #1e1b4b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
         }
 
-    .form-floating > label {
-        color: #cbd5e1;
-    }
-
-    .form-control::placeholder {
-        color: transparent;
-    }
-
-    .form-check-input {
-        border-color: rgba(255,255,255,0.25);
-        background-color: rgba(255,255,255,0.08);
-    }
-
-    .form-check-label,
-    .checkbox label {
-        color: #dbeafe;
-    }
-
-    .game-login-btn {
-        width: 100%;
-        border: none;
-        border-radius: 16px;
-        padding: 14px 18px;
-        font-size: 1rem;
-        font-weight: 800;
-        letter-spacing: 0.03em;
-        background: linear-gradient(90deg, #2563eb, #7c3aed);
-        color: #fff;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.35);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-        .game-login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 18px 34px rgba(124, 58, 237, 0.4);
+        .login-page {
+            width: 100%;
+            max-width: 1100px;
         }
 
-    .game-links {
-        margin-top: 18px;
-    }
+        .login-shell {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            overflow: hidden;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 20px 60px rgba(0,0,0,.30);
+            min-height: 650px;
+        }
 
-        .game-links p {
+        .login-left {
+            padding: 48px;
+            background: radial-gradient(circle at top right, rgba(59,130,246,.18), transparent 28%), linear-gradient(135deg, rgba(37,99,235,.14), rgba(124,58,237,.16));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.14);
+            color: #dbeafe;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            font-size: .82rem;
+            margin-bottom: 22px;
+            width: fit-content;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .login-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1.05;
+            font-weight: 900;
+            margin: 0 0 16px;
+        }
+
+        .login-text {
+            color: #dbeafe;
+            font-size: 1.02rem;
+            line-height: 1.8;
+            max-width: 520px;
+            margin-bottom: 28px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 14px;
+            max-width: 480px;
+        }
+
+            .feature-list li {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 18px;
+                background: rgba(255,255,255,.06);
+                border: 1px solid rgba(255,255,255,.09);
+                color: #e5e7eb;
+                font-weight: 600;
+            }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.10);
+            flex-shrink: 0;
+        }
+
+        .login-right {
+            padding: 48px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 900;
             margin-bottom: 10px;
         }
 
-        .game-links a {
-            color: #93c5fd;
-            text-decoration: none;
-            font-weight: 500;
+        .form-subtitle {
+            color: #cbd5e1;
+            margin-bottom: 26px;
+            line-height: 1.7;
         }
 
-            .game-links a:hover {
-                text-decoration: underline;
+        .form-floating > .form-control,
+        .form-floating > .form-control-plaintext {
+            height: 60px;
+            min-height: 60px;
+            border-radius: 16px;
+        }
+
+        .form-control {
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.12);
+            color: #fff;
+        }
+
+            .form-control:focus {
+                background: rgba(255,255,255,.10);
+                border-color: rgba(96,165,250,.7);
+                box-shadow: 0 0 0 .2rem rgba(59,130,246,.18);
+                color: #fff;
             }
 
-    .text-danger,
-    .validation-summary-errors {
-        color: #fca5a5 !important;
-    }
-
-    .external-login-wrap {
-        margin-top: 28px;
-        padding-top: 22px;
-        border-top: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .external-login-title {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-bottom: 14px;
-        color: #e2e8f0;
-    }
-
-    .external-provider-btn {
-        margin: 0 8px 8px 0;
-        border-radius: 12px;
-    }
-
-    @@media (max-width: 991.98px) {
-        .game-login-shell {
-            grid-template-columns: 1fr;
+        .form-floating > label {
+            color: #cbd5e1;
         }
 
-        .game-hero {
-            padding: 28px;
+        .form-check-label,
+        .forgot-link,
+        .register-link,
+        .resend-link {
+            color: #dbeafe;
         }
 
-            .game-hero h1 {
-                font-size: 2.3rem;
+            .forgot-link:hover,
+            .register-link:hover,
+            .resend-link:hover {
+                color: #fff;
             }
-    }
-</style>
 
-<div class="game-login-page">
-    <div class="game-login-shell">
-        <div class="game-hero">
-            <div class="game-badge">Word Game Portal</div>
-            <h1>Play smarter.<br />Score higher.</h1>
-            <p>
-                Sign in to continue your game journey, track your score history,
-                and challenge yourself with the next round.
-            </p>
+        .login-btn {
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            box-shadow: 0 14px 30px rgba(37,99,235,.28);
+            transition: all .25s ease;
+        }
 
-            <div class="game-feature-list">
-                <div class="game-feature">
-                    <span class="game-feature-icon">🎯</span>
-                    <span>Track your best scores</span>
+            .login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 36px rgba(124,58,237,.34);
+            }
+
+        .bottom-links {
+            margin-top: 22px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .text-danger,
+        .validation-summary-errors {
+            color: #fecaca !important;
+        }
+
+        @@media (max-width: 991.98px) {
+            .login-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .login-left {
+                padding: 32px 24px;
+            }
+
+            .login-right {
+                padding: 32px 24px 36px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .login-title {
+                font-size: 2rem;
+            }
+
+            .form-title {
+                font-size: 1.7rem;
+            }
+
+            .login-left,
+            .login-right {
+                padding: 24px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-shell">
+            <div class="login-left">
+                <div class="brand-pill">
+                    <span class="brand-icon">🎮</span>
+                    <span>Word Game</span>
                 </div>
-                <div class="game-feature">
-                    <span class="game-feature-icon">🧠</span>
-                    <span>Play memory and word challenges</span>
-                </div>
-                <div class="game-feature">
-                    <span class="game-feature-icon">🏆</span>
-                    <span>Keep your progress in one place</span>
+
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-text">
+                    Sign in to continue your progress, check your score history, and climb the leaderboard.
+                </p>
+
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon">🏆</span>
+                        <span>Track your highest score</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">🕘</span>
+                        <span>View your game history</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">🎯</span>
+                        <span>Play and improve your rank</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="login-right">
+                <div class="login-card">
+                    <h2 class="form-title">Log in</h2>
+                    <p class="form-subtitle">Enter your account details to access the game.</p>
+
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <label asp-for="Input.RememberMe" class="form-check-label">
+                                <input class="form-check-input" asp-for="Input.RememberMe" />
+                                @Html.DisplayNameFor(m => m.Input.RememberMe)
+                            </label>
+                        </div>
+
+                        <button id="login-submit" type="submit" class="login-btn">Log in</button>
+
+                        <div class="bottom-links">
+                            <a class="forgot-link" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                            <a class="register-link" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create a new account</a>
+                            <a class="resend-link" id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <div class="game-card">
-            <h2>Welcome Back</h2>
-            <div class="game-card-subtitle">Log in to enter your dashboard</div>
-
-            <form id="account" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Input.Email">Email</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password">Password</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-
-                <div class="checkbox mb-3">
-                    <label asp-for="Input.RememberMe" class="form-label">
-                        <input class="form-check-input me-2" asp-for="Input.RememberMe" />
-                        @Html.DisplayNameFor(m => m.Input.RememberMe)
-                    </label>
-                </div>
-
-                <div>
-                    <button id="login-submit" type="submit" class="game-login-btn">Log In</button>
-                </div>
-
-                <div class="game-links">
-                    <p><a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a></p>
-                    <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a></p>
-                    <p><a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a></p>
-                </div>
-            </form>
-                </div>
-            }
-        </div>
     </div>
-</div>
 
-@section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
