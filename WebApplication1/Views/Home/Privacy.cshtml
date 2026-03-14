@@ -1,6 +1,467 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Game Rules";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+@section Styles {
+    <style>
+        .rules-page {
+            min-height: 100%;
+            padding: 20px 0 10px;
+            color: #fff;
+        }
+
+        .rules-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .rules-hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            padding: 42px 32px;
+            margin-bottom: 24px;
+            background: radial-gradient(circle at top right, rgba(59,130,246,.22), transparent 30%), linear-gradient(135deg, rgba(37,99,235,.18), rgba(124,58,237,.18)), rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 20px 60px rgba(0,0,0,.28);
+        }
+
+        .rules-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.14);
+            color: #dbeafe;
+            font-size: .82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 16px;
+        }
+
+            .rules-badge::before {
+                content: "📘";
+                font-size: .95rem;
+            }
+
+        .rules-title {
+            font-size: clamp(2rem, 4vw, 3.3rem);
+            line-height: 1.08;
+            font-weight: 900;
+            margin: 0 0 12px;
+        }
+
+        .rules-subtitle {
+            max-width: 760px;
+            color: #dbeafe;
+            font-size: 1.04rem;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .rules-card {
+            border-radius: 26px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 18px 50px rgba(0,0,0,.24);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+            overflow: hidden;
+        }
+
+            .rules-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 24px 60px rgba(0,0,0,.30);
+                border-color: rgba(255,255,255,.18);
+            }
+
+        .rules-card-inner {
+            padding: 24px;
+        }
+
+        .span-4 {
+            grid-column: span 4;
+        }
+
+        .span-6 {
+            grid-column: span 6;
+        }
+
+        .span-8 {
+            grid-column: span 8;
+        }
+
+        .span-12 {
+            grid-column: span 12;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.08);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .section-text {
+            color: #cbd5e1;
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        .rules-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 14px;
+        }
+
+            .rules-list li {
+                display: flex;
+                gap: 14px;
+                align-items: flex-start;
+                padding: 14px 16px;
+                border-radius: 18px;
+                background: rgba(255,255,255,.05);
+                border: 1px solid rgba(255,255,255,.08);
+            }
+
+        .rule-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #fff;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 10px 24px rgba(37,99,235,.24);
+        }
+
+        .rule-content strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .rule-content span {
+            color: #cbd5e1;
+            line-height: 1.65;
+            display: block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-box {
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            color: #cbd5e1;
+            font-weight: 700;
+        }
+
+        .tip-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .tip-item {
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            color: #dbeafe;
+            line-height: 1.65;
+        }
+
+        .cta-card {
+            background: radial-gradient(circle at bottom left, rgba(16,185,129,.18), transparent 30%), linear-gradient(135deg, rgba(37,99,235,.18), rgba(124,58,237,.18)), rgba(255,255,255,.06);
+        }
+
+        .cta-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .cta-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .cta-text {
+            margin: 0;
+            color: #dbeafe;
+            line-height: 1.7;
+            max-width: 700px;
+        }
+
+        .play-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            padding: 15px 24px;
+            border-radius: 18px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+            border: 1px solid rgba(255,255,255,.12);
+            box-shadow: 0 14px 30px rgba(37,99,235,.30);
+            transition: all .25s ease;
+            white-space: nowrap;
+        }
+
+            .play-btn:hover {
+                color: #fff;
+                transform: translateY(-3px);
+                box-shadow: 0 18px 36px rgba(124,58,237,.36);
+            }
+
+        @@media (max-width: 991.98px) {
+            .span-4,
+            .span-6,
+            .span-8,
+            .span-12 {
+                grid-column: span 12;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .rules-hero {
+                padding: 28px 20px;
+                border-radius: 24px;
+            }
+
+            .rules-card-inner {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-wrap {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .play-btn {
+                width: 100%;
+            }
+        }
+    </style>
+}
+
+<div class="rules-page">
+    <div class="rules-shell">
+
+        <div class="rules-hero">
+            <div class="rules-badge">Game Guide</div>
+            <h1 class="rules-title">Game Rules</h1>
+            <p class="rules-subtitle">
+                Learn how the game works, how scoring happens, and how to stay in the game longer. Read the rules below before you start your next round.
+            </p>
+        </div>
+
+        <div class="rules-grid">
+            <div class="rules-card span-8">
+                <div class="rules-card-inner">
+                    <div class="section-title">
+                        <span class="section-icon">🎯</span>
+                        <span>How to Play</span>
+                    </div>
+
+                    <ul class="rules-list">
+                        <li>
+                            <span class="rule-number">1</span>
+                            <div class="rule-content">
+                                <strong>Read the word carefully</strong>
+                                <span>A word will appear with one missing letter. Your task is to identify the correct missing letter or answer.</span>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="rule-number">2</span>
+                            <div class="rule-content">
+                                <strong>Choose the correct option</strong>
+                                <span>You will see multiple choices. Select the correct answer before moving to the next question.</span>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="rule-number">3</span>
+                            <div class="rule-content">
+                                <strong>Earn points for correct answers</strong>
+                                <span>Each correct answer increases your score and helps you improve your overall ranking.</span>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="rule-number">4</span>
+                            <div class="rule-content">
+                                <strong>Wrong answers reduce your lives</strong>
+                                <span>If you select the wrong answer, one life will be removed. Be careful with every choice.</span>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="rule-number">5</span>
+                            <div class="rule-content">
+                                <strong>Game ends when lives are over</strong>
+                                <span>Once all lives are used, the game session ends and your result is saved to your history.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rules-card span-4">
+                <div class="rules-card-inner">
+                    <div class="section-title">
+                        <span class="section-icon">📊</span>
+                        <span>Quick Info</span>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <div class="info-value">3</div>
+                            <div class="info-label">Lives</div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-value">+1</div>
+                            <div class="info-label">Per Correct</div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-value">1</div>
+                            <div class="info-label">Life Lost</div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-value">∞</div>
+                            <div class="info-label">Keep Improving</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rules-card span-6">
+                <div class="rules-card-inner">
+                    <div class="section-title">
+                        <span class="section-icon">🏆</span>
+                        <span>Scoring & Ranking</span>
+                    </div>
+
+                    <p class="section-text">
+                        Your score increases every time you answer correctly. The highest score you achieve is stored in your profile and used to determine your rank on the leaderboard. The better you perform, the higher your rank becomes.
+                    </p>
+                </div>
+            </div>
+
+            <div class="rules-card span-6">
+                <div class="rules-card-inner">
+                    <div class="section-title">
+                        <span class="section-icon">🕘</span>
+                        <span>Game History</span>
+                    </div>
+
+                    <p class="section-text">
+                        Every completed game session can be saved in your history. This helps you review your past performance, compare scores, and track your improvement over time.
+                    </p>
+                </div>
+            </div>
+
+            <div class="rules-card span-12">
+                <div class="rules-card-inner">
+                    <div class="section-title">
+                        <span class="section-icon">💡</span>
+                        <span>Tips to Play Better</span>
+                    </div>
+
+                    <ul class="tip-list">
+                        <li class="tip-item">Read the full word pattern before selecting an answer.</li>
+                        <li class="tip-item">Do not rush — one wrong click can cost a life.</li>
+                        <li class="tip-item">Use your previous mistakes to improve in the next round.</li>
+                        <li class="tip-item">Try to beat your highest score in every session.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rules-card cta-card span-12">
+                <div class="rules-card-inner">
+                    <div class="cta-wrap">
+                        <div>
+                            <div class="cta-title">Ready to test your skills?</div>
+                            <p class="cta-text">
+                                Start a new game now and see how far you can go before your lives run out.
+                            </p>
+                        </div>
+
+                        <a asp-controller="Game" asp-action="Index" class="play-btn">
+                            <span>▶</span>
+                            <span>Play Now</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
