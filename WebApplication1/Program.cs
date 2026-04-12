@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
-using WebApplication1.Services;
+using WordGame.Data;
+using WordGame.Services;
 
-namespace WebApplication1
+namespace WordGame
 {
     public class Program
     {

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -18,8 +18,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using WordGame.Infrastructure;
 
-namespace WebApplication1.Areas.Identity.Pages.Account
+namespace WordGame.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
@@ -141,6 +142,10 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        HttpContext.Session.Remove(GameSessionKeys.PlayerMode);
+                        HttpContext.Session.Remove(GameSessionKeys.GameState);
+                        HttpContext.Session.Remove(GameSessionKeys.ActiveRound);
+                        HttpContext.Session.Remove(GameSessionKeys.LastServedWord);
                         return LocalRedirect(returnUrl);
                     }
                 }
