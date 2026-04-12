@@ -1,6 +1,7 @@
-﻿using WebApplication1.Models;
+using WordGame.Infrastructure;
+using WordGame.Models;
 
-namespace WebApplication1.Services
+namespace WordGame.Services
 {
     public class GameQuestionService : IGameQuestionService
     {
@@ -12,9 +13,10 @@ namespace WebApplication1.Services
             _wordProviders = wordProviders;
         }
 
-        public async Task<GameQuestionDto> GenerateQuestionAsync(string category)
+        public async Task<GameQuestionDto> GenerateQuestionAsync(string category, string playerMode, string? previousWord = null)
         {
             category = string.IsNullOrWhiteSpace(category) ? "animals" : category.ToLower();
+            playerMode = GameModes.Normalize(playerMode);
 
             var words = new List<string>();
 
@@ -28,15 +30,28 @@ namespace WebApplication1.Services
             }
 
             words = words
-                .Where(IsValidWord)
+                .Where(word => IsValidWord(word, playerMode))
                 .Select(ToTitleCase)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
             if (words.Count == 0)
-                throw new Exception($"No valid words found for category '{category}'.");
+                throw new Exception($"No valid words found for category '{category}' in '{playerMode}' mode.");
 
-            var word = words[_random.Next(words.Count)];
+            var selectionPool = words;
+            if (!string.IsNullOrWhiteSpace(previousWord) && words.Count > 1)
+            {
+                var nonRepeatedWords = words
+                    .Where(word => !string.Equals(word, previousWord, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (nonRepeatedWords.Count > 0)
+                {
+                    selectionPool = nonRepeatedWords;
+                }
+            }
+
+            var word = selectionPool[_random.Next(selectionPool.Count)];
             var maskedWord = MaskWord(word, out char missingLetter);
 
             var letters = BuildLetterOptions(missingLetter);
@@ -84,14 +99,15 @@ namespace WebApplication1.Services
             return word.Remove(index, 1).Insert(index, "_");
         }
 
-        private static bool IsValidWord(string? word)
+        private static bool IsValidWord(string? word, string playerMode)
         {
             if (string.IsNullOrWhiteSpace(word))
                 return false;
 
             word = word.Trim();
+            var (minLength, maxLength) = GameModes.GetWordLengthRange(playerMode);
 
-            if (word.Length < 4 || word.Length > 10)
+            if (word.Length < minLength || word.Length > maxLength)
                 return false;
 
             if (word.Contains(' '))

@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Web;
 
-namespace WebApplication1.Services
+namespace WordGame.Services
 {
     public class WikidataWordProvider : IWordProvider
     {

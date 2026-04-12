@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
-using WebApplication1.ViewModels;
+using WordGame.Data;
+using WordGame.Infrastructure;
+using WordGame.Models;
 
-namespace WebApplication1.Controllers
+namespace WordGame.Controllers
 {
     [Authorize]
     public class HomeController : Controller
@@ -21,6 +22,11 @@ namespace WebApplication1.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (!HasPlayerMode())
+            {
+                return RedirectToAction(nameof(SelectMode));
+            }
+
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
@@ -35,18 +41,18 @@ namespace WebApplication1.Controllers
                 .Select(x => x.HighestScore)
                 .FirstOrDefaultAsync();
 
-            var gamesPlayed = await _context.UserHighScores
+            var gamesPlayed = await _context.GameHistories
                 .CountAsync(x => x.UserId == userId);
 
-            var recentGames = await _context.UserHighScores
+            var recentGames = await _context.GameHistories
                 .Where(x => x.UserId == userId)
-                .OrderByDescending(x => x.HighestScore)
+                .OrderByDescending(x => x.PlayedAt)
                 .Take(5)
                 .Select(x => new RecentGameItemViewModel
                 {
-                    Score = x.HighestScore,
-                    PlayedAt = x.UpdatedAt,
-                    ResultText = x.HighestScore >= 10 ? "Great run" : "Keep practicing"
+                    Score = x.ScoreAfterRound,
+                    PlayedAt = x.PlayedAt,
+                    ResultText = x.IsCorrect ? "Correct answer" : "Wrong answer"
                 })
                 .ToListAsync();
 
@@ -59,25 +65,59 @@ namespace WebApplication1.Controllers
                 RecentGames = recentGames
             };
 
+            ViewBag.PlayerMode = GameModes.DisplayName(HttpContext.Session.GetString(GameSessionKeys.PlayerMode));
+
             return View(model);
         }
 
-        
+        [HttpGet]
+        public IActionResult SelectMode()
+        {
+            return View(new PlayerModeSelectionViewModel
+            {
+                SelectedMode = HttpContext.Session.GetString(GameSessionKeys.PlayerMode) ?? ""
+            });
+        }
 
-        private string GetRank(int highestScore)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SelectMode(PlayerModeSelectionViewModel model)
+        {
+            if (!GameModes.IsValid(model.SelectedMode))
+            {
+                ModelState.AddModelError(nameof(model.SelectedMode), "Please choose Child or Adult mode.");
+                return View(model);
+            }
+
+            var normalizedMode = GameModes.Normalize(model.SelectedMode);
+            HttpContext.Session.SetString(GameSessionKeys.PlayerMode, normalizedMode);
+            HttpContext.Session.SetObject(GameSessionKeys.GameState, new Models.GameSessionState
+            {
+                Score = 0,
+                Lives = GameModes.GetInitialLives(normalizedMode)
+            });
+            HttpContext.Session.Remove(GameSessionKeys.ActiveRound);
+            HttpContext.Session.Remove(GameSessionKeys.LastServedWord);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        private bool HasPlayerMode()
+        {
+            return GameModes.IsValid(HttpContext.Session.GetString(GameSessionKeys.PlayerMode));
+        }
+
+        private static string GetRank(int highestScore)
         {
             if (highestScore >= 50) return "Master";
             if (highestScore >= 30) return "Pro";
             if (highestScore >= 15) return "Intermediate";
             return "Beginner";
         }
-
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-    
     }
-
 }

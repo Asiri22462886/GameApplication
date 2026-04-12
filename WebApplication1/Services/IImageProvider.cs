@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Services
+namespace WordGame.Services
 {
     public interface IImageProvider
     {

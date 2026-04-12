@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebApplication1.Models.LeaderBoardDto>
+@model IEnumerable<WordGame.Models.LeaderBoardDto>
 
 @{
     ViewData["Title"] = "Leaderboard";
@@ -27,7 +27,9 @@
             {
                 <div class="empty-state-panel trophy-empty">
                     <div class="empty-orb gold-orb"></div>
-                    <div class="empty-icon">🏆</div>
+                    <div class="empty-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0Z"></path><path d="M7 6H5a2 2 0 0 0 0 4h2"></path><path d="M17 6h2a2 2 0 0 1 0 4h-2"></path></svg>
+                    </div>
                     <div class="empty-kicker">Leaderboard Empty</div>
                     <h3 class="empty-title">No high scores yet</h3>
                     <p class="empty-text">
@@ -253,3 +255,22 @@
         }
     </style>
 }
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffd86a;
+        }
+
+        .empty-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }

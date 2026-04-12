@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
-using WebApplication1.ViewModels;
+using WordGame.Models;
 
-namespace WebApplication1.Data
+namespace WordGame.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

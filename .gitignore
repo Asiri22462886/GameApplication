@@ -421,3 +421,6 @@ FodyWeavers.xsd
 /WebApplication1/wwwroot/js/site.js
 /WebApplication1/Properties
 /WebApplication1/Migrations
+/Word_Game.slnx
+/.dotnet/.dotnet
+/buildcheck

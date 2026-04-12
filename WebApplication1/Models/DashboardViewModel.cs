@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.ViewModels
+namespace WordGame.Models
 {
     public class DashboardViewModel
     {

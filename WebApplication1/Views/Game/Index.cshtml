@@ -1,4 +1,6 @@
-﻿@{
+@model WordGame.Models.GamePageViewModel
+
+@{
     ViewData["Title"] = "Missing Letter Game";
 }
 
@@ -112,7 +114,7 @@
 
     .controls-row {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 16px;
         margin-bottom: 24px;
     }
@@ -437,7 +439,10 @@
 <div class="game-shell">
     <div class="game-bg"></div>
 
-    <div class="container py-4 py-lg-5">
+    <div id="gameRoot"
+         class="container py-4 py-lg-5"
+         data-player-mode="@Model.PlayerMode"
+         data-initial-lives="@Model.InitialLives">
         <div class="row justify-content-center">
             <div class="col-12 col-xl-10">
                 <div class="game-panel">
@@ -458,7 +463,7 @@
                             </div>
                             <div class="stat-pill stat-life">
                                 <span class="stat-label">Lives</span>
-                                <span id="lives" class="stat-value">3</span>
+                                <span id="lives" class="stat-value">@Model.InitialLives</span>
                             </div>
                         </div>
                     </div>
@@ -467,15 +472,21 @@
                         <div class="control-card">
                             <label for="category" class="control-label">Category</label>
                             <select id="category" class="modern-select">
-                                <option value="fruits">Fruits</option>
-                                <option value="animals">Animals</option>
-                                <option value="objects">Objects</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category">@char.ToUpper(category[0])@category[1..]</option>
+                                }
                             </select>
                         </div>
 
                         <div class="control-card">
                             <div class="control-label">Round Status</div>
                             <div id="phaseBadge" class="phase-badge preview">Preview</div>
+                        </div>
+
+                        <div class="control-card">
+                            <div class="control-label">Mode</div>
+                            <div class="instruction-text">@Model.PlayerModeDisplay Mode</div>
                         </div>
 
                         <div class="control-card">
@@ -510,7 +521,7 @@
 @section Scripts {
     <script>
         let score = 0;
-        let lives = 3;
+        let lives = @Model.InitialLives;
         let currentQuestion = null;
         let answered = false;
         let canClick = false;
@@ -520,35 +531,23 @@
         const previewDuration = 2500;
 
         document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("category").value = "fruits";
-            loadQuestion();
+            updateStats();
+            startGameSession();
 
             document.getElementById("nextBtn").addEventListener("click", function () {
-                if (lives > 0) loadQuestion();
+                if (lives > 0) {
+                    loadQuestion();
+                }
             });
 
             document.getElementById("restartBtn").addEventListener("click", function () {
-                score = 0;
-                lives = 3;
-                answered = false;
-                canClick = false;
-                updateStats();
-                setMessage("", "");
-                document.getElementById("restartBtn").style.display = "none";
-                document.getElementById("nextBtn").style.display = "inline-block";
-                loadQuestion();
+                startGameSession();
             });
 
             document.getElementById("category").addEventListener("change", function () {
-                score = 0;
-                lives = 3;
-                answered = false;
-                canClick = false;
-                updateStats();
-                setMessage("", "");
-                document.getElementById("restartBtn").style.display = "none";
-                document.getElementById("nextBtn").style.display = "inline-block";
-                loadQuestion();
+                if (lives > 0) {
+                    loadQuestion();
+                }
             });
         });
 
@@ -560,6 +559,40 @@
 
             shuffleTimers.forEach(t => clearTimeout(t));
             shuffleTimers = [];
+        }
+
+        async function startGameSession() {
+            answered = false;
+            canClick = false;
+            clearAllTimers();
+
+            document.getElementById("maskedWord").textContent = "Loading...";
+            document.getElementById("instructionText").textContent = "Preparing your game session...";
+            document.getElementById("optionsContainer").innerHTML = "";
+            document.getElementById("restartBtn").style.display = "none";
+            document.getElementById("nextBtn").style.display = "inline-block";
+            setMessage("", "");
+
+            try {
+                const response = await fetch('/api/game/start', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to start game session");
+                }
+
+                const result = await response.json();
+                score = result.score;
+                lives = result.lives;
+                updateStats();
+                loadQuestion();
+            } catch (error) {
+                document.getElementById("maskedWord").textContent = "Error";
+                document.getElementById("instructionText").textContent = "Could not start a game session.";
+                setMessage("Could not start a game session.", "danger");
+            }
         }
 
         async function loadQuestion() {
@@ -576,8 +609,13 @@
             const category = document.getElementById("category").value;
 
             try {
-                const response = await fetch(`/api/game/question?category=${category}`);
-                if (!response.ok) throw new Error("Failed to load question");
+                const response = await fetch(`/api/game/question?category=${category}`, {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to load question");
+                }
 
                 currentQuestion = await response.json();
                 document.getElementById("maskedWord").textContent = currentQuestion.maskedWord;
@@ -587,7 +625,9 @@
                 renderShuffleCards(currentQuestion.options, true, false);
 
                 previewTimer = setTimeout(() => {
-                    if (!currentQuestion || answered || lives <= 0) return;
+                    if (!currentQuestion || answered || lives <= 0) {
+                        return;
+                    }
                     startShuffleSequence();
                 }, previewDuration);
 
@@ -631,7 +671,9 @@
                 `;
 
                 card.querySelector(".option-card").addEventListener("click", function () {
-                    if (!canClick) return;
+                    if (!canClick) {
+                        return;
+                    }
                     checkAnswer(option);
                 });
 
@@ -686,7 +728,9 @@
             });
 
             const hint = document.getElementById("shuffleHint");
-            if (hint) hint.style.display = "none";
+            if (hint) {
+                hint.style.display = "none";
+            }
 
             canClick = true;
             updatePhaseUI("answer");
@@ -694,40 +738,28 @@
                 "Now choose the correct hidden card.";
         }
 
-                async function checkAnswer(option) {
-            if (answered || lives <= 0 || !canClick) return;
+        async function checkAnswer(option) {
+            if (answered || lives <= 0 || !canClick) {
+                return;
+            }
 
             answered = true;
             canClick = false;
             clearAllTimers();
 
             try {
-                const payload = {
-                    category: document.getElementById("category").value,
-                    originalWord: currentQuestion.originalWord,
-                    maskedWord: currentQuestion.maskedWord,
-                    missingLetter: currentQuestion.missingLetter,
-                    selectedLetter: option.letter,
-                    score: score,
-                    lives: lives
-                };
-
-                console.log("Submitting answer payload:", payload);
-
                 const response = await fetch('/api/game/answer', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     credentials: 'include',
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        selectedLetter: option.letter
+                    })
                 });
 
-                console.log("Submit status:", response.status);
-
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.log("Submit error:", errorText);
                     setMessage("Could not save answer.", "danger");
                     answered = false;
                     canClick = true;
@@ -735,8 +767,6 @@
                 }
 
                 const result = await response.json();
-                console.log("Submit result:", result);
-
                 score = result.score;
                 lives = result.lives;
 
@@ -761,7 +791,6 @@
                     loadQuestion();
                 }, 1200);
             } catch (error) {
-                console.error("SubmitAnswer failed:", error);
                 setMessage("Something went wrong while submitting the answer.", "danger");
                 answered = false;
                 canClick = true;

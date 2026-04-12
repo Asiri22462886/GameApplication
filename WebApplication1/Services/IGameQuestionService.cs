@@ -1,9 +1,9 @@
-﻿using WebApplication1.Models;
+using WordGame.Models;
 
-namespace WebApplication1.Services
+namespace WordGame.Services
 {
     public interface IGameQuestionService
     {
-        Task<GameQuestionDto> GenerateQuestionAsync(string category);
+        Task<GameQuestionDto> GenerateQuestionAsync(string category, string playerMode, string? previousWord = null);
     }
 }

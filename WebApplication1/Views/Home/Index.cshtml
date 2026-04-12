@@ -1,4 +1,4 @@
-﻿@model WebApplication1.ViewModels.DashboardViewModel
+@model WordGame.Models.DashboardViewModel
 
 @{
     ViewData["Title"] = "Game Dashboard";
@@ -108,7 +108,7 @@
         margin-bottom: 16px;
     }
 
-        .section-title .icon {
+    .section-title .icon {
             width: 38px;
             height: 38px;
             display: inline-flex;
@@ -116,7 +116,22 @@
             justify-content: center;
             border-radius: 12px;
             background: rgba(255,255,255,.08);
-            font-size: 1.05rem;
+        }
+
+        .section-title .icon svg,
+        .stat-icon svg,
+        .quick-icon svg,
+        .activity-icon svg,
+        .hero-visual-inner svg,
+        .empty-emoji svg,
+        .hero-actions svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
     .section-subtext {
@@ -173,7 +188,7 @@
         align-items: center;
         justify-content: center;
         background: rgba(255,255,255,.08);
-        font-size: 1.15rem;
+        color: #f8fafc;
     }
 
     .stat-value {
@@ -293,7 +308,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3.2rem;
+        color: #ffffff;
         box-shadow: 0 0 40px rgba(255,255,255,.08);
     }
 
@@ -328,7 +343,7 @@
         align-items: center;
         justify-content: center;
         background: rgba(255,255,255,.08);
-        font-size: 1.2rem;
+        color: #ffffff;
         margin-bottom: 14px;
     }
 
@@ -383,7 +398,7 @@
         align-items: center;
         justify-content: center;
         background: rgba(255,255,255,.08);
-        font-size: 1.15rem;
+        color: #ffffff;
         flex-shrink: 0;
     }
 
@@ -418,9 +433,14 @@
     }
 
     .empty-emoji {
-        font-size: 2.2rem;
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         display: block;
-        margin-bottom: 10px;
+        color: #dbeafe;
     }
 
     .empty-state strong {
@@ -562,7 +582,9 @@
                     <div class="stat-card">
                         <div class="stat-top">
                             <div class="stat-title">Highest Score</div>
-                            <div class="stat-icon">🏆</div>
+                            <div class="stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.68 6.27.91-4.54 4.43 1.07 6.24L12 17.3l-5.61 2.96 1.07-6.24L2.92 9.6l6.27-.91L12 3Z"></path></svg>
+                            </div>
                         </div>
                         <div class="stat-value">@Model.HighestScore</div>
                         <div class="stat-note">Your best score achieved so far.</div>
@@ -571,7 +593,9 @@
                     <div class="stat-card">
                         <div class="stat-top">
                             <div class="stat-title">Games Played</div>
-                            <div class="stat-icon">🎮</div>
+                            <div class="stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M8 4v16"></path><path d="M16 10v10"></path><path d="M12 7v13"></path><path d="M4 20h16"></path></svg>
+                            </div>
                         </div>
                         <div class="stat-value">@Model.GamesPlayed</div>
                         <div class="stat-note">Total completed game sessions.</div>
@@ -580,7 +604,9 @@
                     <div class="stat-card">
                         <div class="stat-top">
                             <div class="stat-title">Current Rank</div>
-                            <div class="stat-icon">🥇</div>
+                            <div class="stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0Z"></path><path d="M7 6H5a2 2 0 0 0 0 4h2"></path><path d="M17 6h2a2 2 0 0 1 0 4h-2"></path></svg>
+                            </div>
                         </div>
                         <div class="stat-value">#@Model.CurrentRank</div>
                         <div class="stat-note">Based on your highest score.</div>
@@ -592,7 +618,7 @@
                 <div class="card-inner">
                     <div class="hero-content">
                         <div class="hero-text">
-                            <div class="hero-mini">Player Dashboard</div>
+                            <div class="hero-mini">Player Dashboard • @ViewBag.PlayerMode Mode</div>
                             <h2 class="hero-title">Ready for the next round?</h2>
                             <p class="hero-desc">
                                 Start a new game, challenge yourself, and try to beat your highest score while improving your rank and activity history.
@@ -600,19 +626,25 @@
 
                             <div class="hero-actions">
                                 <a asp-controller="Game" asp-action="Index" class="btn-main">
-                                    <span>▶</span>
+                                    <span aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><path d="M8 7h8"></path><path d="M8 17h8"></path><path d="M6 9v6"></path><path d="M18 9v6"></path><path d="M3 12h3"></path><path d="M18 12h3"></path><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle></svg>
+                                    </span>
                                     <span>Play Game</span>
                                 </a>
 
                                 <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn-soft">
-                                    <span>👤</span>
+                                    <span aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"></path><path d="M5 20a7 7 0 0 1 14 0"></path></svg>
+                                    </span>
                                     <span>My Profile</span>
                                 </a>
                             </div>
                         </div>
 
                         <div class="hero-visual">
-                            <div class="hero-visual-inner">🎯</div>
+                            <div class="hero-visual-inner" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M8 7h8"></path><path d="M8 17h8"></path><path d="M6 9v6"></path><path d="M18 9v6"></path><path d="M3 12h3"></path><path d="M18 12h3"></path><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle></svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -621,26 +653,34 @@
             <div class="card span-4 stagger-3">
                 <div class="card-inner">
                     <div class="section-title">
-                        <span class="icon">⚡</span>
+                        <span class="icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="M12 4v16"></path></svg>
+                        </span>
                         Quick Links
                     </div>
                     <p class="section-subtext">Fast access to the most used dashboard actions.</p>
 
                     <div class="quick-actions">
                         <a asp-controller="Game" asp-action="Index" class="quick-card">
-                            <div class="quick-icon">▶</div>
+                            <div class="quick-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M8 7h8"></path><path d="M8 17h8"></path><path d="M6 9v6"></path><path d="M18 9v6"></path><path d="M3 12h3"></path><path d="M18 12h3"></path><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle></svg>
+                            </div>
                             <div class="quick-title">Start Game</div>
                             <div class="quick-text">Begin a new game session now.</div>
                         </a>
 
                         <a asp-area="Identity" asp-page="/Account/Manage/Index" class="quick-card">
-                            <div class="quick-icon">👤</div>
+                            <div class="quick-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"></path><path d="M5 20a7 7 0 0 1 14 0"></path></svg>
+                            </div>
                             <div class="quick-title">My Profile</div>
                             <div class="quick-text">Manage your account and details.</div>
                         </a>
 
                         <a asp-controller="Home" asp-action="Privacy" class="quick-card">
-                            <div class="quick-icon">📘</div>
+                            <div class="quick-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z"></path><path d="M9.5 12.5 11 14l3.5-4"></path></svg>
+                            </div>
                             <div class="quick-title">Game Rules</div>
                             <div class="quick-text">Read how the game works.</div>
                         </a>
@@ -651,7 +691,9 @@
             <div class="card span-12 stagger-4">
                 <div class="card-inner">
                     <div class="section-title">
-                        <span class="icon">🕘</span>
+                        <span class="icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 8v5l3 2"></path><path d="M21 12a9 9 0 1 1-2.64-6.36"></path></svg>
+                        </span>
                         Recent Activity
                     </div>
                     <p class="section-subtext">Your latest completed game sessions.</p>
@@ -663,7 +705,9 @@
                             {
                                 <li class="activity-item">
                                     <div class="activity-left">
-                                        <div class="activity-icon">🎲</div>
+                                        <div class="activity-icon" aria-hidden="true">
+                                            <svg viewBox="0 0 24 24"><path d="M12 8v5l3 2"></path><path d="M21 12a9 9 0 1 1-2.64-6.36"></path></svg>
+                                        </div>
                                         <div class="activity-details">
                                             <strong>@game.ResultText</strong>
                                             <span>@game.PlayedAt.ToLocalTime().ToString("dd MMM yyyy hh:mm tt")</span>
@@ -678,7 +722,9 @@
                     else
                     {
                         <div class="empty-state">
-                            <span class="empty-emoji">🎮</span>
+                            <span class="empty-emoji" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"></path><path d="M5 20a7 7 0 0 1 14 0"></path></svg>
+                            </span>
                             <strong>No games played yet</strong>
                             <p>Your recent game history will appear here after you play.</p>
                         </div>
