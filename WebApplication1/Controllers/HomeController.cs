@@ -14,12 +14,14 @@ namespace WordGame.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
+        // Receives the database context and Identity user manager through dependency injection.
         public HomeController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
+        // player's dashboard.
         public async Task<IActionResult> Index()
         {
             if (!HasPlayerMode())
@@ -70,7 +72,9 @@ namespace WordGame.Controllers
             return View(model);
         }
 
+        // Shows the page where the player chooses child or adult.
         [HttpGet]
+        
         public IActionResult SelectMode()
         {
             return View(new PlayerModeSelectionViewModel
@@ -79,8 +83,10 @@ namespace WordGame.Controllers
             });
         }
 
+        // Saves the selected player mode in session and prepares a fresh game state.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        
         public IActionResult SelectMode(PlayerModeSelectionViewModel model)
         {
             if (!GameModes.IsValid(model.SelectedMode))
@@ -102,16 +108,19 @@ namespace WordGame.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Displays the rules.
         public IActionResult Privacy()
         {
             return View();
         }
 
+        // Checks whether the current browser session already has a valid player mode.
         private bool HasPlayerMode()
         {
             return GameModes.IsValid(HttpContext.Session.GetString(GameSessionKeys.PlayerMode));
         }
 
+        // show the player's highest score into a simple rank.
         private static string GetRank(int highestScore)
         {
             if (highestScore >= 50) return "Master";

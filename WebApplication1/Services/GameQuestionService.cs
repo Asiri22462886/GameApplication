@@ -65,7 +65,7 @@ namespace WordGame.Services
                 Options = letters
             };
         }
-
+        //this method build three otions for the missing letter, one correct and two random letters, and return them in random order.
         private static List<GameOptionDto> BuildLetterOptions(char correctLetter)
         {
             correctLetter = char.ToLower(correctLetter);
@@ -88,7 +88,7 @@ namespace WordGame.Services
                 .OrderBy(x => Guid.NewGuid())
                 .ToList();
         }
-
+        //this method hide one letter in the word and return the masked word and the missing letter.
         private static string MaskWord(string word, out char missingLetter)
         {
             int index = word.Length <= 4

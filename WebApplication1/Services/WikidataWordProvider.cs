@@ -7,11 +7,13 @@ namespace WordGame.Services
     {
         private readonly HttpClient _httpClient;
 
+        // Receives the HTTP client used to call the Wikidata SPARQL endpoint.
         public WikidataWordProvider(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
+        // Collects words for the selected category from Wikidata and filters them for gameplay.
         public async Task<List<string>> GetWordsAsync(string category, int count)
         {
             var sparql = BuildQuery(category, count * 5);
@@ -62,6 +64,7 @@ namespace WordGame.Services
                 .ToList();
         }
 
+        // Builds the SPARQL query used to ask Wikidata for words in each category.
         private static string BuildQuery(string category, int limit)
         {
             return category.ToLower() switch
@@ -114,6 +117,7 @@ LIMIT {limit}",
             };
         }
 
+        // Rejects technical or scientific labels that would feel unfair in the game.
         private static bool IsSimpleCommonWord(string word)
         {
             var banned = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -140,6 +144,7 @@ LIMIT {limit}",
             return true;
         }
 
+        // Formats a provider word into the same display style used across the game.
         private static string ToTitleCase(string value)
         {
             return char.ToUpper(value[0]) + value[1..].ToLower();

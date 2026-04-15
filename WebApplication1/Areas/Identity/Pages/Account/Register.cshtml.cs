@@ -31,6 +31,7 @@ namespace WordGame.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        // Receives the Identity services needed to create and sign in a new player account.
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
@@ -101,12 +102,14 @@ namespace WordGame.Areas.Identity.Pages.Account
         }
 
 
+        // Prepares the registration page and loads any available external login providers.
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
+        // Creates the player account, sends the confirmation link, and signs in when allowed.
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -159,6 +162,7 @@ namespace WordGame.Areas.Identity.Pages.Account
             return Page();
         }
 
+        // Creates a basic Identity user object for the registration process.
         private IdentityUser CreateUser()
         {
             try
@@ -173,6 +177,7 @@ namespace WordGame.Areas.Identity.Pages.Account
             }
         }
 
+        // Gets the email-aware user store required by the default Identity registration flow.
         private IUserEmailStore<IdentityUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)

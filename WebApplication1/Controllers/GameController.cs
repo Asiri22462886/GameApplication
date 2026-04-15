@@ -14,11 +14,13 @@ namespace WordGame.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
 
+        // Receives the database context used by history and leaderboard pages.
         public GameController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
+        // Opens the main game screen and creates a clean session state for a new play attempt.
         public IActionResult Index()
         {
             if (!HasPlayerMode())
@@ -47,12 +49,14 @@ namespace WordGame.Controllers
             return View(model);
         }
 
+        // Shows the final score page when the player has no lives left.
         public IActionResult GameOver(int finalScore = 0)
         {
             ViewBag.FinalScore = finalScore;
             return View();
         }
 
+        // Loads the current user's saved round history from the database.
         public IActionResult History()
         {
             if (!HasPlayerMode())
@@ -70,6 +74,7 @@ namespace WordGame.Controllers
             return View(history);
         }
 
+        // Builds the leaderboard by joining saved high scores with Identity user accounts.
         public async Task<IActionResult> HighScores()
         {
             if (!HasPlayerMode())
@@ -92,6 +97,7 @@ namespace WordGame.Controllers
             return View(scores);
         }
 
+        // Makes sure the player has selected a child or adult mode before game pages open.
         private bool HasPlayerMode()
         {
             return GameModes.IsValid(HttpContext.Session.GetString(GameSessionKeys.PlayerMode));

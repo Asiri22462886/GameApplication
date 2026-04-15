@@ -18,12 +18,14 @@ namespace WordGame.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
 
+        // Receives the Identity sign-out service and logger used by the logout page.
         public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
         }
 
+        // Clears game session data and signs the current user out of the application.
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             HttpContext.Session.Remove(GameSessionKeys.PlayerMode);

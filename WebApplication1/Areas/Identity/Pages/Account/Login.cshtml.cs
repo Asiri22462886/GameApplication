@@ -22,6 +22,7 @@ namespace WordGame.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
+        // Receives the Identity sign-in service and logger used by the login page.
         public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
@@ -52,6 +53,7 @@ namespace WordGame.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
+        // Prepares the login page and clears any external login cookie left from another attempt.
         public async Task OnGetAsync(string returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
@@ -68,6 +70,7 @@ namespace WordGame.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
+        // Checks the submitted email and password, then starts a fresh game session after login.
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");

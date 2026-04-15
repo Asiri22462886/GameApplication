@@ -85,8 +85,18 @@
             justify-content: center;
             background: linear-gradient(135deg, #2563eb, #7c3aed);
             color: #fff;
-            font-size: 1rem;
         }
+
+            .brand-icon svg,
+            .feature-icon svg {
+                width: 20px;
+                height: 20px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.9;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+            }
 
         .login-title {
             font-size: clamp(2rem, 5vw, 3.5rem);
@@ -133,6 +143,7 @@
             justify-content: center;
             background: rgba(255,255,255,.10);
             flex-shrink: 0;
+            color: #ffffff;
         }
 
         .login-right {
@@ -260,7 +271,9 @@
         <div class="login-shell">
             <div class="login-left">
                 <div class="brand-pill">
-                    <span class="brand-icon">??</span>
+                    <span class="brand-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M8 7h8"></path><path d="M8 17h8"></path><path d="M6 9v6"></path><path d="M18 9v6"></path><path d="M3 12h3"></path><path d="M18 12h3"></path><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle></svg>
+                    </span>
                     <span>Word Game</span>
                 </div>
 
@@ -271,15 +284,21 @@
 
                 <ul class="feature-list">
                     <li>
-                        <span class="feature-icon">??</span>
+                        <span class="feature-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.68 6.27.91-4.54 4.43 1.07 6.24L12 17.3l-5.61 2.96 1.07-6.24L2.92 9.6l6.27-.91L12 3Z"></path></svg>
+                        </span>
                         <span>Track your highest score</span>
                     </li>
                     <li>
-                        <span class="feature-icon">??</span>
+                        <span class="feature-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 8v5l3 2"></path><path d="M21 12a9 9 0 1 1-2.64-6.36"></path></svg>
+                        </span>
                         <span>View your game history</span>
                     </li>
                     <li>
-                        <span class="feature-icon">??</span>
+                        <span class="feature-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0Z"></path><path d="M7 6H5a2 2 0 0 0 0 4h2"></path><path d="M17 6h2a2 2 0 0 1 0 4h-2"></path></svg>
+                        </span>
                         <span>Play and improve your rank</span>
                     </li>
                 </ul>

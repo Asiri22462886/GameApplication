@@ -551,6 +551,7 @@
             });
         });
 
+        // Stops any preview or shuffle timers before a new round starts.
         function clearAllTimers() {
             if (previewTimer) {
                 clearTimeout(previewTimer);
@@ -561,6 +562,7 @@
             shuffleTimers = [];
         }
 
+        // Calls the server to reset score, lives, and round data for a new game session.
         async function startGameSession() {
             answered = false;
             canClick = false;
@@ -595,6 +597,7 @@
             }
         }
 
+        // Requests a fresh question from the API for the selected category.
         async function loadQuestion() {
             answered = false;
             canClick = false;
@@ -638,6 +641,7 @@
             }
         }
 
+        // Draws the three answer cards and connects each card to the click handler.
         function renderShuffleCards(options, showLabels, enableClick) {
             const container = document.getElementById("optionsContainer");
 
@@ -681,6 +685,7 @@
             });
         }
 
+        // Runs the visual shuffle stage before the player is allowed to answer.
         function startShuffleSequence() {
             canClick = false;
             updatePhaseUI("shuffle");
@@ -698,6 +703,7 @@
             shuffleTimers.push(step1, step2, step3, step4);
         }
 
+        // Hides the visible letter labels so the player must remember the correct card.
         function hideLabelsAndBlurImages() {
             document.querySelectorAll(".option-label").forEach(label => {
                 label.classList.add("hidden-label");
@@ -711,6 +717,7 @@
             });
         }
 
+        // Applies one animation pattern to move the cards around the screen.
         function applyShufflePattern(pattern) {
             const cards = document.querySelectorAll(".shuffle-card");
             cards.forEach((card, index) => {
@@ -718,6 +725,7 @@
             });
         }
 
+        // Ends the shuffle animation and unlocks card clicking for the answer phase.
         function finishShuffle() {
             const cards = Array.from(document.querySelectorAll(".shuffle-card"));
             const shuffledIndexes = [0, 1, 2].sort(() => Math.random() - 0.5);
@@ -738,6 +746,7 @@
                 "Now choose the correct hidden card.";
         }
 
+        // Sends only the selected letter to the server so the server can check the answer safely.
         async function checkAnswer(option) {
             if (answered || lives <= 0 || !canClick) {
                 return;
@@ -797,11 +806,13 @@
             }
         }
 
+        // Refreshes the score and lives shown on the game screen.
         function updateStats() {
             document.getElementById("score").textContent = score;
             document.getElementById("lives").textContent = lives;
         }
 
+        // Updates the status badge so the player knows the current stage of the round.
         function updatePhaseUI(mode) {
             const badge = document.getElementById("phaseBadge");
 
@@ -817,6 +828,7 @@
             }
         }
 
+        // Shows success, error, or neutral feedback after server responses.
         function setMessage(text, type) {
             const el = document.getElementById("message");
             el.textContent = text;

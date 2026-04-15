@@ -17,6 +17,7 @@ namespace WordGame.Controllers
         private readonly IGameQuestionService _gameQuestionService;
         private readonly ApplicationDbContext _dbContext;
 
+        // Receives the question service and database context used by the game API.
         public GameApiController(IGameQuestionService gameQuestionService, ApplicationDbContext dbContext)
         {
             _gameQuestionService = gameQuestionService;
@@ -24,6 +25,7 @@ namespace WordGame.Controllers
         }
 
         [HttpPost("start")]
+        // Starts a new server-side game session using the selected child/adult mode.
         public IActionResult StartGame()
         {
             var playerMode = HttpContext.Session.GetString(GameSessionKeys.PlayerMode);
@@ -54,6 +56,7 @@ namespace WordGame.Controllers
         }
 
         [HttpGet("question")]
+        // Generates a question for the chosen category and stores the real answer in session.
         public async Task<IActionResult> GetQuestion(string category = "animals")
         {
             try
@@ -113,6 +116,7 @@ namespace WordGame.Controllers
         }
 
         [HttpPost("answer")]
+        // Checks the selected letter against the session answer, saves the round, and updates high score.
         public async Task<IActionResult> SubmitAnswer([FromBody] AnswerRequestDto request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
